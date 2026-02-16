@@ -1,4 +1,5 @@
 import os
+import mimetypes
 
 from google import genai
 
@@ -78,10 +79,15 @@ class Agent:
         uploaded_files = []
         for file_path in file_paths:
             try:
-                with open(file_path, "rb") as f:
-                    response = self.client.files.upload(file=f)
-                    uploaded_files.append(response)
-                    print(f"Uploaded: {file_path}")
+                # Detect mime type
+                mime_type, _ = mimetypes.guess_type(file_path)
+                if mime_type is None:
+                    mime_type = "text/plain"
+                
+                # Upload the file using the file path directly
+                response = self.client.files.upload(file=file_path)
+                uploaded_files.append(response)
+                print(f"Uploaded: {file_path} (mime type: {mime_type})")
             except FileNotFoundError:
                 print(f"Warning: File not found: {file_path}")
             except Exception as e:
@@ -101,48 +107,22 @@ class Agent:
 
 
 if __name__ == "__main__":
-    # Create my agent
-    my_ai = Agent()
+    import argparse
 
-    # test 1: basic usage
-    my_ai.set_pre_prompt("You are a helpful assistant. ")
-    response = my_ai.ask("What is the capital of France?")
-    print("_________________ TEST 1 __________________")
-    print(response)
-    print("_________________ END OF TEST 1 __________________")
+    parser = argparse.ArgumentParser(description="Interact with the Gemini Agent via CLI.")
+    parser.add_argument("--pre-prompt", type=str, default=None, help="File containing pre-prompt text.")
+    parser.add_argument("--file", dest="files", action="append", default=None, help="File to send with the prompt. Can be used multiple times.")
+    parser.add_argument("prompt", type=str, help="Prompt to send to the agent.")
+    args = parser.parse_args()
 
-    # test 2: no pre-prompt
-    my_ai.set_pre_prompt("")
-    response = my_ai.ask("What is the capital of Germany?")
-    print("_________________ TEST 2 __________________")
-    print(response)
-    print("_________________ END OF TEST 2 __________________")
+    print("[DEBUG] Parsed arguments:", args)
+    agent = Agent()
+    if args.pre_prompt:
+        agent.set_pre_prompt_from_file(args.pre_prompt)
 
-    # test 3: set pre-prompt from file
-    my_ai.set_pre_prompt_from_file("pre_prompt.txt")
-    msg = ""
-    with open("msg.txt", "r", encoding="utf-8") as f:
-        msg = f.read()
-    response = my_ai.ask(msg)
-    print("_________________ TEST 3 __________________")
-    print(response)
-    print("_________________ END OF TEST 3 __________________")
-
-    # test 4: chat history from file
-    my_ai.set_pre_prompt_from_file("pre_prompt.txt")
-    msg = ""
-    with open("chat.txt", "r", encoding="utf-8") as f:
-        msg = f.read()
-    response = my_ai.ask(msg)
-    print("_________________ TEST 4 __________________")
-    print(response)
-    print("_________________ END OF TEST 4 __________________")
-
-    # test 5: ask with files (PDF, image, text)
-    my_ai.set_pre_prompt_from_file("pre_prompt.txt")
-    with open("chat.txt", "r", encoding="utf-8") as f:
-        msg = f.read()
-    response = my_ai.ask_with_files(msg, ["lebenslauf.txt"])
-    print("_________________ TEST 5 __________________")
-    print(response)
-    print("_________________ END OF TEST 5 __________________")
+    if args.files:
+        response = agent.ask_with_files(args.prompt, args.files)
+        print(response)
+    else:
+        response = agent.ask(args.prompt)
+        print(response)
