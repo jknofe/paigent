@@ -2,6 +2,7 @@ import mimetypes
 import os
 
 from google import genai
+from google.genai import types
 from yaspin import yaspin
 from yaspin.spinners import Spinners
 
@@ -9,7 +10,9 @@ from yaspin.spinners import Spinners
 class Agent:
     """A class to interact with the Google Gemini API."""
 
-    def __init__(self, model="gemini-3-flash-preview"):
+    def __init__(
+        self, model="gemini-3-flash-preview", include_thoughts=False, temperature=0.2
+    ):
         """
         Initialize the Agent with a Gemini API key.
 
@@ -19,6 +22,13 @@ class Agent:
         """
         self.client = genai.Client()
         self._model = model
+        # Global configuration for content generation (e.g., thinking config, temperature)
+        self._config = types.GenerateContentConfig(
+            thinking_config=types.ThinkingConfig(
+                include_thoughts=include_thoughts  # Global deaktiviert für Speed
+            ),
+            temperature=temperature,
+        )
         self._pre_prompt = ""
         # check if the API key is set correctly in environment variable
         if not os.getenv("GEMINI_API_KEY"):
@@ -65,7 +75,7 @@ class Agent:
         """
         full_text = self._pre_prompt + text if self._pre_prompt else text
         response = self.client.models.generate_content(
-            model=self._model, contents=full_text
+            model=self._model, contents=full_text, config=self._config
         )
         return response.text
 
@@ -107,7 +117,7 @@ class Agent:
             contents.append(uploaded_file)
 
         response = self.client.models.generate_content(
-            model=self._model, contents=contents
+            model=self._model, contents=contents, config=self._config
         )
         return response.text
 
@@ -133,7 +143,7 @@ if __name__ == "__main__":
 
     # Initialize the agent with the specified model
     agent = Agent("gemini-2.5-flash")
-    
+
     # Set pre-prompt if provided
     if args.pre_prompt:
         agent.set_pre_prompt_from_file(args.pre_prompt)
