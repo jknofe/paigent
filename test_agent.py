@@ -2,18 +2,19 @@ import sys
 from agent import Agent
 
 
-def test_agent():
+
+def test_agent(model=None):
+    print(f"Testing Agent with model: {model}")
     # test 1: basic usage
     print("_________________ TEST 1 __________________")
-    my_ai = Agent()
-    my_ai.set_pre_prompt("You are a helpful assistant. ")
+    my_ai = Agent(model)
     response = my_ai.ask("What is the capital of France?")
     print(response)
     print("")
 
     # test 2: no pre-prompt
     print("_________________ TEST 2 __________________")
-    my_ai.set_pre_prompt("")
+    my_ai.set_pre_prompt("You are a helpful only french speaking assistant. ")
     response = my_ai.ask("What is the capital of Germany?")
     print(response)
     print("")
@@ -48,4 +49,5 @@ def test_agent():
     print("")
 
 if __name__ == "__main__":
-    test_agent()
+    test_agent("gemini-2.5-flash")
+    test_agent("gemini-2.5-pro")
