@@ -62,7 +62,7 @@ class Agent:
         except IOError as e:
             raise IOError(f"Error reading prompt file: {e}")
 
-    @yaspin(Spinners.arc, text="AI is Thinking...", color="yellow")
+    @yaspin(Spinners.dots, text="AI is Thinking...", color="yellow")
     def ask(self, text):
         """
         Send a request to the Gemini API with optional pre-prompt.
@@ -79,7 +79,7 @@ class Agent:
         )
         return response.text
 
-    @yaspin(Spinners.arc, text="AI is Thinking...", color="green")
+    @yaspin(Spinners.dots, text="AI is Thinking...", color="green")
     def ask_with_files(self, text, file_paths):
         """
         Send a request to the Gemini API with file contents (supports PDFs, images, etc).

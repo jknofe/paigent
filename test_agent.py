@@ -3,11 +3,12 @@ from agent import Agent
 
 
 
-def test_agent(model=None):
+def test_agent(model=None, include_thoughts=False, temperature=0.2):
     print(f"Testing Agent with model: {model}")
+    my_ai = Agent(model, include_thoughts=include_thoughts, temperature=temperature)
+    
     # test 1: basic usage
     print("_________________ TEST 1 __________________")
-    my_ai = Agent(model)
     response = my_ai.ask("What is the capital of France?")
     print(response)
     print("")
@@ -49,5 +50,5 @@ def test_agent(model=None):
     print("")
 
 if __name__ == "__main__":
-    test_agent("gemini-2.5-flash")
-    test_agent("gemini-2.5-pro")
+    test_agent(model="gemini-2.5-flash", temperature=1.5)
+    test_agent(model="gemini-2.5-pro", temperature=0.7)
