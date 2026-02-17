@@ -120,38 +120,3 @@ class Agent:
             model=self._model, contents=contents, config=self._config
         )
         return response.text
-
-
-if __name__ == "__main__":
-    import argparse
-
-    parser = argparse.ArgumentParser(
-        description="Interact with the Gemini Agent via CLI."
-    )
-    parser.add_argument(
-        "--pre-prompt", type=str, default=None, help="File containing pre-prompt text."
-    )
-    parser.add_argument(
-        "--file",
-        dest="files",
-        action="append",
-        default=None,
-        help="File to send with the prompt. Can be used multiple times.",
-    )
-    parser.add_argument("prompt", type=str, help="Prompt to send to the agent.")
-    args = parser.parse_args()
-
-    # Initialize the agent with the specified model
-    agent = Agent("gemini-2.5-flash")
-
-    # Set pre-prompt if provided
-    if args.pre_prompt:
-        agent.set_pre_prompt_from_file(args.pre_prompt)
-
-    # Send the prompt with or without files based on the arguments
-    if args.files:
-        response = agent.ask_with_files(args.prompt, args.files)
-        print(response)
-    else:
-        response = agent.ask(args.prompt)
-        print(response)
