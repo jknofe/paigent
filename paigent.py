@@ -2,6 +2,15 @@
 
 from pprint import pprint as pp
 from agent import Agent
+import mimetypes
+
+mimetypes.add_type('text/plain', '.log')
+mimetypes.add_type('text/plain', '.LOG')
+
+def print_colored_response(response_text):
+    """Prints the response, interpreting ANSI color codes."""
+    print(response_text.encode("utf-8").decode("unicode_escape"))
+
 
 if __name__ == "__main__":
     import argparse
@@ -39,7 +48,7 @@ if __name__ == "__main__":
     # Send the prompt with or without files based on the arguments
     if args.files:
         response = agent.ask_with_files(args.prompt, args.files)
-        print(response)
+        print_colored_response(response)
     else:
         response = agent.ask(args.prompt)
-        print(response)
+        print_colored_response(response)
