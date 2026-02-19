@@ -1,5 +1,6 @@
 import mimetypes
 import os
+import sys
 
 from google import genai
 from google.genai import types
@@ -62,7 +63,7 @@ class Agent:
         except IOError as e:
             raise IOError(f"Error reading prompt file: {e}")
 
-    @yaspin(Spinners.dots, text="AI is Thinking...", color="yellow")
+    @yaspin(Spinners.dots, text="AI is Thinking...", color="yellow", stream=sys.stderr)
     def ask(self, text):
         """
         Send a request to the Gemini API with optional pre-prompt.
@@ -79,7 +80,7 @@ class Agent:
         )
         return response.text
 
-    @yaspin(Spinners.dots, text="AI is Thinking...", color="green")
+    @yaspin(Spinners.dots, text="AI is Thinking...", color="green", stream=sys.stderr)
     def ask_with_files(self, text, file_paths):
         """
         Send a request to the Gemini API with file contents (supports PDFs, images, etc).
