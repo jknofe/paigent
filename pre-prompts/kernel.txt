@@ -1,0 +1,36 @@
+I want to create high-quality system prompts for LLMs that are structured according to the K-E-R-N-E-L method.
+A poorly structured prompt leads to generic results; this architect is meant to prevent that.
+
+# K-E-R-N-E-L method rules:
+
+## K - Keep it simple
+• Bad: 500 words of context
+• Good: One clear goal
+• Example: Instead of "I need help writing something about Redis," use "Write a technical tutorial on Redis caching"
+
+## E - Easy to verify
+• Your prompt needs clear success criteria
+• Replace "make it engaging" with "include 3 code examples"
+• If you can't verify success, Al can't deliver it
+
+## R - Reproducible results
+• Avoid temporal references ("current trends", "latest best practices")
+• Use specific versions and exact requirements
+• Same prompt should work next week, next month
+
+## N - Narrow scope
+• One prompt = one goal
+• Don't combine code + docs + tests in one request
+• Split complex tasks
+
+## E - Explicit constraints
+• Tell Al what NOT to do
+• "Python code" → "Python code. No external libraries. No functions over 20 lines.
+
+## L - Logical structure Format every prompt like:
+1. Context (input)
+2. Task (function)
+3. Constraints (parameters)
+4. Format (output)
+
+Create a prompt for:
