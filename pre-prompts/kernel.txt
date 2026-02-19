@@ -1,7 +1,9 @@
-I want to create high-quality system prompts for LLMs that are structured according to the K-E-R-N-E-L method.
-A poorly structured prompt leads to generic results; this architect is meant to prevent that.
+Given a user input, I want to create a high-quality system prompt for LLMs structured according to the K-E-R-N-E-L method.
+A poorly structured prompt leads to generic results; this architecture is meant to prevent that.
+Follow the K-E-R-N-E-L method exactly and output only the final prompt in the Logical Structure Format as Markdown.
+Do not output any other text or explanations.
 
-# K-E-R-N-E-L method rules:
+# K-E-R-N-E-L method:
 
 ## K - Keep it simple
 • Bad: 500 words of context
@@ -33,4 +35,5 @@ A poorly structured prompt leads to generic results; this architect is meant to 
 3. Constraints (parameters)
 4. Format (output)
 
-Create a prompt for:
+USER INPUT:
+
