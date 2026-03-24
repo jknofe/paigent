@@ -3,13 +3,32 @@
 from pprint import pprint as pp
 from agent import Agent
 import mimetypes
+import re
 
 mimetypes.add_type('text/plain', '.log')
 mimetypes.add_type('text/plain', '.LOG')
 
 def print_colored_response(response_text):
-    """Prints the response, interpreting ANSI color codes."""
-    print(response_text.encode("utf-8").decode("unicode_escape"))
+    """Prints the response, interpreting ANSI color codes.
+
+    If the API returns escaped sequences like "\\u001b[31m", we
+    decode them so the terminal shows colours. Do not touch ordinary
+    Unicode characters (ä, ö, ü etc) unless an escape is present.
+    """
+    # decode only when there are literal escape sequences
+    if "\\u" in response_text or "\\x1b" in response_text:
+        try:
+            response_text = response_text.encode("utf-8").decode("unicode_escape")
+        except Exception:
+            pass
+    print(response_text, end="")
+
+# helper used when output is not a tty; strips ANSI codes entirely
+_ANSI_ESCAPE_RE = re.compile(r"\x1b\[[0-9;]*m")
+
+def strip_ansi(text: str) -> str:
+    """Remove ANSI escape sequences from a string."""
+    return _ANSI_ESCAPE_RE.sub("", text)
 
 
 if __name__ == "__main__":
@@ -22,6 +41,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "-p",
         "--pre-prompt",
+
         type=str,
         default=None,
         help="File containing pre-prompt text.",
@@ -40,7 +60,7 @@ if __name__ == "__main__":
     # exit(0)
 
     # Initialize the agent with the specified model
-    agent = Agent(model="gemini-2.5-flash", temperature=0.1)
+    agent = Agent(model="gemini-2.5-flash", temperature=1)
 
     # Set pre-prompt if provided
     if args.pre_prompt:
@@ -55,4 +75,5 @@ if __name__ == "__main__":
     if sys.stdout.isatty():
         print_colored_response(response)
     else:
-        print(response)
+        # remove any ANSI colour codes when output is redirected or piped
+        print(strip_ansi(response))
